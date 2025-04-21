@@ -5,14 +5,11 @@ import Quiz from './components/Quiz';
 import Results from './components/Results';
 
 export default function App() {
-  const [view, setView] = useState('list');        // list | quiz | results
+  const [view, setView] = useState('list'); // list | quiz | results
   const [selectedQuizIdx, setSelectedQuizIdx] = useState(null);
   const [quizResult, setQuizResult] = useState(null);
 
-  const topics = useMemo(
-    () => [...new Set(tests.map(t => t.topic))],
-    []
-  );
+  const topics = useMemo(() => [...new Set(tests.map((t) => t.topic))], []);
 
   const startQuiz = (idx) => {
     setSelectedQuizIdx(idx);
@@ -31,30 +28,16 @@ export default function App() {
   };
 
   return (
-    <main className="max-w-2xl mx-auto px-4 py-8">
+    <div className="container">
       {view === 'list' && (
-        <QuizList
-          tests={tests}
-          topics={topics}
-          onStart={startQuiz}
-          title="Все тесты"
-        />
+        <QuizList tests={tests} topics={topics} onStart={startQuiz} />
       )}
 
       {view === 'quiz' && (
-        <Quiz
-          quiz={tests[selectedQuizIdx]}
-          onFinish={finishQuiz}
-          onAbort={backHome}
-        />
+        <Quiz quiz={tests[selectedQuizIdx]} onFinish={finishQuiz} onAbort={backHome} />
       )}
 
-      {view === 'results' && (
-        <Results
-          result={quizResult}
-          onRestart={backHome}
-        />
-      )}
-    </main>
+      {view === 'results' && <Results result={quizResult} onRestart={backHome} />}
+    </div>
   );
 }

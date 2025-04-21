@@ -6,7 +6,7 @@ export default function Results({ result, onRestart }) {
   return (
     <div className="space-y-6">
       <div className="card text-center">
-        <h2 className="text-xl font-semibold mb-2">{title}</h2>
+        <h2>{title}</h2>
         <p>
           Правильных ответов: <b>{correct}</b> / {total}
         </p>
@@ -14,24 +14,21 @@ export default function Results({ result, onRestart }) {
 
       {wrong.length > 0 && (
         <div className="card">
-          <h3 className="font-medium mb-3">Ошибки</h3>
-          <ul className="space-y-3 list-disc pl-5">
+          <h3>Ошибки</h3>
+          <ul className="errors">
             {wrong.map((w, idx) => (
               <li key={idx}>
-                <p className="mb-1">{w.question}</p>
-                <p className="text-sm text-slate-600">
+                <p>{w.question}</p>
+                <small>
                   Правильный ответ: <b>{w.options[w.answer]}</b>
-                </p>
+                </small>
               </li>
             ))}
           </ul>
         </div>
       )}
 
-      <button
-        onClick={onRestart}
-        className="block mx-auto px-6 py-2 bg-slate-900 text-white rounded-lg"
-      >
+      <button onClick={onRestart} className="btn btn--primary block mx-auto">
         На главную
       </button>
     </div>
