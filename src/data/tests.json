@@ -1,0 +1,34 @@
+[
+  {
+    "title": "REST API — Тест 1",
+    "topic": "REST API",
+    "questions": [
+      {
+        "question": "Что означает метод GET?",
+        "options": [
+          "Создание ресурса",
+          "Удаление ресурса",
+          "Получение ресурса",
+          "Обновление ресурса"
+        ],
+        "answer": 2
+      },
+      {
+        "question": "Какой код ответа означает успех?",
+        "options": ["200", "404", "500", "403"],
+        "answer": 0
+      }
+    ]
+  },
+  {
+    "title": "SQL — Тест 1",
+    "topic": "SQL",
+    "questions": [
+      {
+        "question": "Какой оператор выбирает все столбцы?",
+        "options": ["SELECT *", "UPDATE", "DELETE", "INSERT"],
+        "answer": 0
+      }
+    ]
+  }
+]
