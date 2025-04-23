@@ -1,59 +1,57 @@
 import { useState, useEffect, useMemo } from 'react';
+
+/* данные и компоненты */
 import tests from './data/tests.json';
 import QuizList from './components/QuizList';
 import Quiz from './components/Quiz';
 import Results from './components/Results';
 import History from './components/History';
 
-/* ───────── helpers ───────── */
+/* ───────────────────────── helpers ───────────────────────── */
 const LS_KEY = 'quizProgress';
 
+/* читаем localStorage и мигрируем старый формат {obj} → [{obj}] */
 const loadProgress = () => {
   const raw = JSON.parse(localStorage.getItem(LS_KEY) || '{}');
-
-  // ✨ Миграция: если значение не массив, оборачиваем в массив
-  const migrated = Object.fromEntries(
-    Object.entries(raw).map(([title, val]) => [
-      title,
-      Array.isArray(val) ? val : [val],
-    ])
+  return Object.fromEntries(
+    Object.entries(raw).map(([title, v]) => [title, Array.isArray(v) ? v : [v]])
   );
-
-  return migrated;
 };
-
 const saveProgress = (obj) => localStorage.setItem(LS_KEY, JSON.stringify(obj));
 
+const shuffle = (arr) => [...arr].sort(() => Math.random() - 0.5);
 
 /* ───────────────────────── App ───────────────────────── */
 export default function App() {
-  const [view, setView] = useState('list');            // list | quiz | results | history
-  const [selectedIdx, setSelectedIdx] = useState(null); // индекс теста в tests[]
-  const [attempt, setAttempt] = useState(null);         // текущая попытка (объект)
-  const [progress, setProgress] = useState({});         // { [title]: Attempt[] }
+  /* прогресс + маршруты */
+  const [progress, setProgress] = useState({});
+  const [view, setView] = useState('list');         // list | quiz | results | history
+  const [selectedIdx, setSelectedIdx] = useState(null);
+  const [attempt, setAttempt] = useState(null);
 
-  /* загружаем прогресс один раз */
-  useEffect(() => setProgress(loadProgress()), []);
+  /* загружаем прогресс при старте */
+  useEffect(() => {
+    setProgress(loadProgress());
+  }, []);
 
-  /* сохраняем в localStorage каждый раз при изменении */
   const updateProgress = (next) => {
     setProgress(next);
     saveProgress(next);
   };
 
-  /* все темы для фильтра */
+  /* темы фильтра */
   const topics = useMemo(() => [...new Set(tests.map((t) => t.topic))], []);
 
   /* ─── старт новой попытки ─── */
   const startNewAttempt = (idx) => {
     const quiz = tests[idx];
     const attemptObj = {
-      id: Date.now(),           // уникальный id
+      id: Date.now(),
       status: 'in-progress',
       startedAt: Date.now(),
+      current: 0,
       questions: shuffle(quiz.questions),
       answers: [],
-      current: 0,
     };
     const list = progress[quiz.title] ? [...progress[quiz.title], attemptObj] : [attemptObj];
     updateProgress({ ...progress, [quiz.title]: list });
@@ -63,10 +61,10 @@ export default function App() {
     setView('quiz');
   };
 
-  /* ─── продолжить существующую попытку (abandoned / in-progress) ─── */
+  /* ─── продолжить ─── */
   const resumeAttempt = (title, id) => {
     const quizIdx = tests.findIndex((q) => q.title === title);
-    const at = progress[title].find((a) => a.id === id);
+    const at = progress[title]?.find((a) => a.id === id);
     if (quizIdx !== -1 && at) {
       setSelectedIdx(quizIdx);
       setAttempt(at);
@@ -74,40 +72,41 @@ export default function App() {
     }
   };
 
-  /* ─── открыть результаты завершённой попытки ─── */
+  /* ─── показать результаты ─── */
   const showResult = (title, id) => {
-    const at = progress[title].find((a) => a.id === id);
+    const at = progress[title]?.find((a) => a.id === id);
     if (at) {
       setAttempt(at);
       setView('results');
     }
   };
 
-  /* ─── когда пользователь отвечает на вопрос ─── */
+  /* ─── обновить попытку ─── */
   const patchAttempt = (patch) => {
     const title = tests[selectedIdx].title;
-    const list = progress[title].map((a) => (a.id === attempt.id ? { ...a, ...patch } : a));
-    const nextProg = { ...progress, [title]: list };
-    updateProgress(nextProg);
-    setAttempt(list.find((a) => a.id === attempt.id)); // синхронизируем attempt в состоянии
+    const updated = progress[title].map((a) =>
+      a.id === attempt.id ? { ...a, ...patch } : a
+    );
+    const next = { ...progress, [title]: updated };
+    updateProgress(next);
+    setAttempt(updated.find((a) => a.id === attempt.id));
   };
 
-  /* ─── завершить попытку ─── */
-  const finishQuiz = (details) => {
+  /* ─── завершить ─── */
+  const finishQuiz = ({ correct, total, wrong }) => {
     patchAttempt({
       status: 'completed',
       finishedAt: Date.now(),
-      ...details, // correct, total, wrong
+      correct,
+      total,
+      wrong,
     });
     setView('results');
   };
 
-  /* ─── бросить/выйти ─── */
+  /* ─── бросить ─── */
   const abortQuiz = () => {
-    patchAttempt({
-      status: 'abandoned',
-      abandonedAt: Date.now(),
-    });
+    patchAttempt({ status: 'abandoned', abandonedAt: Date.now() });
     goHome();
   };
 
@@ -119,43 +118,41 @@ export default function App() {
 
   /* ───────────────────────── UI ───────────────────────── */
   return (
-    <div className="container">
-      {view === 'list' && (
-        <>
-          <button className="btn btn--ghost mb-4" onClick={() => setView('history')}>
-            Мой прогресс
-          </button>
-          <QuizList tests={tests} topics={topics} onStart={startNewAttempt} />
-        </>
-      )}
+    <>
+      {/* шапка */}
+      <header className="site-header">Polynskih</header>
 
-      {view === 'quiz' && (
-        <Quiz
-          quiz={tests[selectedIdx]}
-          attempt={attempt}
-          onPatch={patchAttempt}
-          onFinish={finishQuiz}
-          onAbort={abortQuiz}
-        />
-      )}
+      <div className="container">
+        {view === 'list' && (
+          <>
+            <button className="btn btn--ghost mb-4" onClick={() => setView('history')}>
+              Мой прогресс
+            </button>
+            <QuizList tests={tests} topics={topics} onStart={startNewAttempt} />
+          </>
+        )}
 
-      {view === 'results' && (
-        <Results data={attempt} onRestart={goHome} />
-      )}
+        {view === 'quiz' && (
+          <Quiz
+            quiz={tests[selectedIdx]}
+            attempt={attempt}
+            onPatch={patchAttempt}
+            onFinish={finishQuiz}
+            onAbort={abortQuiz}
+          />
+        )}
 
-      {view === 'history' && (
-        <History
-          progress={progress}
-          onClose={goHome}
-          onResume={resumeAttempt}
-          onShowResult={showResult}
-        />
-      )}
-    </div>
+        {view === 'results' && <Results data={attempt} onRestart={goHome} />}
+
+        {view === 'history' && (
+          <History
+            progress={progress}
+            onClose={goHome}
+            onResume={resumeAttempt}
+            onShowResult={showResult}
+          />
+        )}
+      </div>
+    </>
   );
-}
-
-/* ───────────────────────── utils ───────────────────────── */
-function shuffle(arr) {
-  return [...arr].sort(() => Math.random() - 0.5);
 }
