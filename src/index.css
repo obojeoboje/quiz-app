@@ -1,6 +1,4 @@
-/* ─────────────────────────
-   Палитра и базовый reset
-   ───────────────────────── */
+/* ---------- палитра и базовый reset ---------- */
 :root {
   --bg: #f8fafc;
   --card: #ffffff;
@@ -25,19 +23,14 @@ body {
   line-height: 1.45;
 }
 
-/* ─────────────────────────
-   Контейнер
-   ───────────────────────── */
+/* ---------- контейнер ---------- */
 .container {
   max-width: 640px;
   margin-inline: auto;
   padding: 3rem 1rem 5rem;
-  /* ↑ чуть больше воздуха сверху/снизу */
 }
 
-/* ─────────────────────────
-   Заголовки
-   ───────────────────────── */
+/* ---------- типографика ---------- */
 h1 {
   font-size: 1.9rem;
   margin: 0 0 2rem;
@@ -52,39 +45,35 @@ h2 {
 
 h3 {
   font-size: 1.1rem;
-  margin: 0 0 0.75rem;
+  margin: 0 0 .75rem;
   font-weight: 600;
 }
 
-/* ─────────────────────────
-   Карточка
-   ───────────────────────── */
+/* ---------- карточка ---------- */
 .card {
   background: var(--card);
   border: 1px solid var(--border);
   border-radius: 12px;
   padding: 1.5rem 1.75rem;
-  box-shadow: 0 4px 14px -4px rgb(0 0 0 / 0.06);
-  transition: transform 0.12s ease, box-shadow 0.12s ease;
+  box-shadow: 0 4px 14px -4px rgb(0 0 0 / 6%);
+  transition: transform .12s ease, box-shadow .12s ease;
 }
 
 .card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 18px -4px rgb(0 0 0 / 0.08);
+  box-shadow: 0 6px 18px -4px rgb(0 0 0 / 8%);
 }
 
-/* ─────────────────────────
-   Кнопки
-   ───────────────────────── */
+/* ---------- кнопки ---------- */
 .btn {
   display: inline-block;
-  padding: 0.6rem 1.2rem;
+  padding: .6rem 1.2rem;
   border-radius: 8px;
-  font-size: 0.95rem;
+  font-size: .95rem;
   font-weight: 500;
   border: 1px solid transparent;
   cursor: pointer;
-  transition: background 0.18s ease, color 0.18s ease;
+  transition: background .18s ease, color .18s ease;
 }
 
 .btn--primary {
@@ -92,13 +81,13 @@ h3 {
   color: #fff;
 }
 
-.btn--primary:hover {
-  filter: brightness(1.07);
-}
-
 .btn--ghost {
   background: var(--accent-light);
   color: var(--accent);
+}
+
+.btn--primary:hover {
+  filter: brightness(1.07);
 }
 
 .btn--ghost:hover {
@@ -106,18 +95,19 @@ h3 {
   color: #fff;
 }
 
-/* фильтры‑чипы */
+.btn--icon {
+  padding: .4rem .55rem;
+}
+
+/* ---------- фильтр‑чипы ---------- */
 .filter__wrap {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.75rem;
-  /* больше расстояние между чипами */
+  gap: .75rem;
   margin-bottom: 1.75rem;
 }
 
-/* ─────────────────────────
-   Прогресс‑бар
-   ───────────────────────── */
+/* ---------- прогресс‑бар ---------- */
 .progress {
   height: 6px;
   background: var(--border);
@@ -131,20 +121,18 @@ h3 {
   height: 100%;
   background: var(--accent);
   width: var(--value, 0%);
-  transition: width 0.3s ease;
+  transition: width .3s ease;
 }
 
-/* ─────────────────────────
-   Список ошибок в Results
-   ───────────────────────── */
+/* ---------- список ошибок ---------- */
 ul.errors {
   list-style: none;
-  padding: 0;
   margin: 0;
+  padding: 0;
 }
 
 ul.errors li {
-  margin-bottom: 1.25rem;
+  margin-bottom: 1.3rem;
   padding-left: 1.2rem;
   position: relative;
 }
@@ -155,64 +143,55 @@ ul.errors li::before {
   left: 0;
 }
 
-/* ─────────────────────────
-   🔹 Мини‑utility слой (Tailwind‑like)
-   ───────────────────────── */
-
-/* display helpers */
+/* ---------- минимальный utility‑слой ---------- */
 .flex {
-  display: flex;
-}
-
-.items-center {
-  align-items: center;
-}
-
-.justify-between {
-  justify-content: space-between;
+  display: flex
 }
 
 .grid {
-  display: grid;
+  display: grid
 }
 
-/* gaps */
+.items-center {
+  align-items: center
+}
+
+.justify-between {
+  justify-content: space-between
+}
+
 .gap-2 {
-  gap: 0.5rem;
+  gap: .5rem
 }
 
 .gap-4 {
-  gap: 1.25rem;
+  gap: 1.25rem
 }
 
-/* margin‑bottom */
 .mb-4 {
-  margin-bottom: 1rem;
+  margin-bottom: 1rem
 }
 
-/* text utils */
 .text-left {
-  text-align: left;
+  text-align: left
 }
 
 .text-center {
-  text-align: center;
+  text-align: center
 }
 
 .text-sm {
-  font-size: 0.85rem;
+  font-size: .85rem
 }
 
 .underline {
-  text-decoration: underline;
+  text-decoration: underline
 }
 
-/* spacing between stacked siblings (space-y‑6) */
 .space-y-6>*+* {
-  margin-top: 1.75rem;
+  margin-top: 1.75rem
 }
 
-/* full‑width helper */
 .w-full {
-  width: 100%;
+  width: 100%
 }

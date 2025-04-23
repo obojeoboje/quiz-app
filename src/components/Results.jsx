@@ -1,7 +1,6 @@
-export default function Results({ result, onRestart }) {
-  if (!result) return null;
-
-  const { correct, total, wrong, title } = result;
+export default function Results({ data, onRestart }) {
+  if (!data) return null;
+  const { title, correct, total, wrong } = data;
 
   return (
     <div className="space-y-6">
@@ -12,7 +11,7 @@ export default function Results({ result, onRestart }) {
         </p>
       </div>
 
-      {wrong.length > 0 && (
+      {wrong?.length > 0 && (
         <div className="card">
           <h3>Ошибки</h3>
           <ul className="errors">

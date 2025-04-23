@@ -1,48 +1,44 @@
 import { useState } from 'react';
 
 export default function QuizList({ tests, topics, onStart }) {
-  const [topic, setTopic] = useState('');
-
-  const visibleTests = topic ? tests.filter((t) => t.topic === topic) : tests;
+  const [filter, setFilter] = useState('');
+  const visible = filter ? tests.filter(t => t.topic === filter) : tests;
 
   return (
     <>
       <h1>Все тесты</h1>
 
-      {/* фильтр */}
       <div className="filter__wrap">
         <button
-          className={`btn ${topic === '' ? 'btn--primary' : 'btn--ghost'}`}
-          onClick={() => setTopic('')}
+          className={`btn ${filter === '' ? 'btn--primary' : 'btn--ghost'}`}
+          onClick={() => setFilter('')}
         >
           Все
         </button>
-        {topics.map((t) => (
+        {topics.map(t => (
           <button
             key={t}
-            className={`btn ${topic === t ? 'btn--primary' : 'btn--ghost'}`}
-            onClick={() => setTopic(t)}
+            className={`btn ${filter === t ? 'btn--primary' : 'btn--ghost'}`}
+            onClick={() => setFilter(t)}
           >
             {t}
           </button>
         ))}
       </div>
 
-      {/* список тестов */}
       <div className="grid gap-4">
-        {visibleTests.map((t) => (
-          <div key={t.title} className="card flex items-center justify-between gap-4">
-            <span>{t.title}</span>
+        {visible.map(q => (
+          <div key={q.title} className="card flex justify-between items-center">
+            <span>{q.title}</span>
             <button
               className="btn btn--primary"
-              onClick={() => onStart(tests.indexOf(t))}
+              onClick={() => onStart(tests.indexOf(q))}
             >
               Начать
             </button>
           </div>
         ))}
-
-        {visibleTests.length === 0 && <p>Тесты отсутствуют.</p>}
+        {visible.length === 0 && <p>Тесты отсутствуют.</p>}
       </div>
     </>
   );
